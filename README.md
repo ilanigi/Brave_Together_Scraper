@@ -1,4 +1,4 @@
-# brave_scraper
+# Brave_Together_Scraper 
 
 This project is part of brave together program.
 
