@@ -6,6 +6,7 @@ from torch import optim
 from torch.utils.data import DataLoader
 from torch.nn import CrossEntropyLoss
 import matplotlib.pyplot as plt
+import pandas as pd
 
 emb_dim = 50
 hid_dim = 100
@@ -79,9 +80,36 @@ def plotMeasurement(measurement, trainMeasure, devMeasure):
     plt.savefig(measurement)
 
 
+# Create vocabulary dict of words or labels
+def createVocab():
+    dict = {}
+    i = 0
+
+    # add words from file
+    with open("vocab.txt", "r") as f:
+        for word in f:
+            word = word.strip()
+            dict[word] = i
+            i += 1
+
+    # add special tokens
+    dict['PAD_BEGIN'] = len(dict)
+    dict['PAD_END'] = len(dict)
+
+    return dict
+
 
 if __name__ == '__main__':
-    # data
+    # read data and vocab from files
+    data = pd.read_excel("data.xlsx")
+    sentences, labels = data.pop("sentences"), data.pop("labels")
+    vocab = createVocab()
+    # convert to numbers
+    labels = [0 if label == "Real" else 1 for label in labels]
+    sentences = [sentence.split(' ') for sentence in sentences]
+    sentences = [[vocab[word] for word in sentence] for sentence in sentences]
+
+
     trainData = 1  # [([list of words], label)]
     devData = 1
     vocabW = 1  # {word : serial number}
