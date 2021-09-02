@@ -19,7 +19,8 @@ def stripToTextVector(text):
     text = ''.join([i for i in text if not i.isdigit()])
 
     #Remove punctuations
-    text = ''.join(u for u in text if u not in ("?", ".", ";", ":", "!",'”','"',"[","]","{","}","(",")"))
+    punctuations = ["?",",","“", ".", ";", ":", "!",'”','"',"[","]","{","}","(",")"]
+    text = ''.join(u for u in text if u not in punctuations)
 
     #Replace slashes with spaces
     text = text.replace("/"," ")
