@@ -2,46 +2,32 @@ import numpy as np
 import sys
 import torch
 import torch.nn as nn
+from torch import optim
 from torch.utils.data import DataLoader
 from torch.nn import CrossEntropyLoss
 import matplotlib.pyplot as plt
 
+emb_dim = 50
+hid_dim = 100
+batchSize = 1
+lr = 0.01
+epochs = 10
 
-embedding_dim = 50
 
-
-class MyBilstm(nn.Module):
-    def __init__(self):
-        super(MyBilstm, self).__init__()
-        self.embedding = nn.Embedding.from_pretrained(self.createEmb(), norm_type=2, max_norm=2).requires_grad_(True)
-        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=hid_dim, num_layers=2, bidirectional=True)
-        self.dropout = nn.Dropout()
-        self.fc = nn.Linear(hid_dim * 2, len(vocabL.values()))
-
-    def forward(self, x):  # (sampleLen,)
-        emb = self.embedding(x)  # (sampleLen, embDim)
-        hn, _ = self.lstm(emb.view(len(x), 1, -1))  # (sampleLen, batchSize, hidDim*2)
-        hn = self.dropout(hn)
-        hn = torch.squeeze(hn)  # (sampleLen, hidDim*2)
-        out = self.fc(hn)  # (len(vocabL.values()), )
-        if len(x) == 1:  # the output must has 2 dimensions for loss calculation
-            out = out.reshape(1, -1)
-        return out
-    
-    
-# The neural network
+# The amazing neural network
 class MyModel(nn.Module):
     def __init__(self):
         super(MyModel, self).__init__()
         # maps each label to an embedding_dim vector
-        self.embeddings = nn.Embedding(len(vocabW), embedding_dim).requires_grad_(True)
+        self.embeddings = nn.Embedding(len(vocabW), emb_dim).requires_grad_(True)
+        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=hid_dim, num_layers=3)
+        self.fc = nn.Linear(hid_dim, 1)
 
-
-
-    def forward(self, x):                                 # (batchSize, winSize)
-        x = self.embeddings(x)                            # (batchSize, winSize, embedSize)
-
-        return x
+    def forward(self, x):
+        emb = self.embedding(x)  # (sampleLen, embDim)
+        hn, _ = self.lstm(emb.view(len(x), 1, hid_dim))  # (sampleLen, batchSize=1, hidDim)
+        out = self.fc(hn[-1][-1])  # (1,)
+        return torch.sigmoid(out)
 
 
 # Trains our model
@@ -50,15 +36,72 @@ def train(fiveGrams):
     trainLoader = DataLoader(fiveGrams, batch_size=batchSize, shuffle=True)
     for contextWords, midLabel in trainLoader:
         optimizer.zero_grad()
-        output = model(contextWords)
-        loss = loss_f(output, midLabel)
+        output = model(words)
+        loss = loss_f(output, label)
         loss.backward()
         optimizer.step()
+        lossTotal += loss.item()
+        if torch.round(output.data[0]) == label.data[0]:
+            corrects += 1
+    accuracy = corrects / len(list_of_tuples)
+    lossTotal /= len(list_of_tuples)
+    return accuracy, lossTotal
 
 
-# Press the green button in the gutter to run the script.
+# does dev, returns loss and accuracy
+def dev(list_of_tuples):
+    model.eval()
+    devLoader = DataLoader(list_of_tuples, batch_size=batchSize, shuffle=True)
+    lossTotal, corrects = 0, 0
+    with torch.no_grad():
+        for sample, target in devLoader:
+            output = model(sample)
+            loss = loss_f(output, target)
+            lossTotal += loss.item()
+            if torch.round(output.data[0]) == target.data[0]:
+                corrects += 1
+    accuracy = corrects / len(list_of_tuples)
+    lossTotal /= len(list_of_tuples)
+    return accuracy, lossTotal
+
+
+# plot 2 given lists of values
+def plotMeasurement(measurement, trainMeasure, devMeasure):
+    epochsList = [i for i in range(epochs)]
+    plt.figure()
+    plt.title(measurement)
+    plt.plot(epochsList, trainMeasure, label="Train")
+    plt.plot(epochsList, devMeasure, label="Dev")
+    plt.xlabel("Epochs")
+    plt.ylabel(measurement)
+    plt.locator_params(axis="x", integer=True, tight=True)  # make x axis to display only whole number (iterations)
+    plt.legend()
+    plt.savefig(measurement)
+
+
+
 if __name__ == '__main__':
-    trainData = 1               # ([list of words], label)
-    vocabW = 1                  # {word : serial number}
+    # data
+    trainData = 1  # [([list of words], label)]
+    devData = 1
+    vocabW = 1  # {word : serial number}
+
+    # model
     model = MyModel()
-    optimizer =
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_f = nn.BCELoss()
+
+    # do train and dev, save results
+    losses_train, accuracies_train, losses_dev, accuracies_dev = [], [], [], []
+    for epoch in range(epochs):
+        print("epoch", epoch)
+        loss_train, accuracy_train = train(trainData)
+        loss_dev, accuracy_dev = dev(devData)
+        losses_train.append(loss_train)
+        accuracies_train.append(loss_train)
+        losses_dev.append(loss_dev)
+        accuracies_dev.append(accuracy_dev)
+
+    # plot results
+    plotMeasurement("Loss", losses_train, losses_dev)
+    plotMeasurement("Accuracy", accuracies_train, accuracies_dev)
