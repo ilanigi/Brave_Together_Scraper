@@ -32,11 +32,12 @@ class MyModel(nn.Module):
         return torch.sigmoid(out)
 
 
-# Trains our model
-def train(fiveGrams):
+# does train, returns loss and accuracy
+def train(list_of_tuples):
     model.train()
-    trainLoader = DataLoader(fiveGrams, batch_size=batchSize, shuffle=True)
-    for contextWords, midLabel in trainLoader:
+    trainLoader = DataLoader(list_of_tuples, batch_size=batchSize, shuffle=True)
+    lossTotal, corrects = 0, 0
+    for words, label in trainLoader:
         optimizer.zero_grad()
         output = model(words)
         loss = loss_f(output, label)
