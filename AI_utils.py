@@ -2,11 +2,12 @@ import re
 from math import ceil
 import matplotlib.pyplot as plt
 import torch
+
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 
 def stripToTextVector(text):
-    #Removing URLs with a regular expression
+    # Removing URLs with a regular expression
     url_pattern = re.compile(r'https?://\S+|www\.\S+')
     text = url_pattern.sub(r'', text)
 
@@ -19,18 +20,17 @@ def stripToTextVector(text):
     # Remove distracting single quotes
     text = re.sub("\'", "", text)
 
-
-    #Remove numbers
+    # Remove numbers
     text = ''.join([i for i in text if not i.isdigit()])
 
-    #Remove punctuations
-    punctuations = ["?",",","“", ".", ";", ":", "!",'”','"',"[","]","{","}","(",")"]
+    # Remove punctuations
+    punctuations = ["?", ",", "“", ".", ";", ":", "!", '”', '"', "[", "]", "{", "}", "(", ")"]
     text = ''.join(u for u in text if u not in punctuations)
 
-    #Replace slashes with spaces
-    text = text.replace("/"," ")
+    # Replace slashes with spaces
+    text = text.replace("/", " ")
 
-    #Change string to lower letters
+    # Change string to lower letters
     text = text.lower()
 
     return text.split()
@@ -75,7 +75,6 @@ def myEncode(sentences, labels, vocab):
     sentences = torch.tensor(sentences, dtype=torch.long, device=device)
     labels = torch.tensor(labels, dtype=torch.float32, device=device)
     return sentences, labels
-
 
 
 # plot 2 given lists of values

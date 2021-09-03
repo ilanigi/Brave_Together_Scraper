@@ -81,6 +81,7 @@ if __name__ == '__main__':
             if word not in vocab:
                 vocab[word] = len(vocab)
 
+
     # encode, split to train and dev
     sentences, labels = myEncode(sentences, labels, vocab)
     allData = [(sentence, label) for sentence, label in zip(sentences, labels)]  # [([list of words], label)]
