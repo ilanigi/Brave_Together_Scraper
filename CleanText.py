@@ -1,3 +1,7 @@
+#Hello!
+#Following program reads a text document and creates a new file containg a list of each word in the original file
+#Program inteneded to create the basis for a vector of an RNN machine learning interface. 
+
 import re
 
 def stripToTextVector(text):
