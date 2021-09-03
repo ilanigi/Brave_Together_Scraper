@@ -107,6 +107,7 @@ if __name__ == '__main__':
     # convert to numbers
     labels = [0 if label == "Real" else 1 for label in labels]
     sentences = [sentence.split(' ') for sentence in sentences]
+    sentences = [[word.lower() for word in sentence] for sentence in sentences]   # delete when receive clean data
     sentences = [[vocab[word] for word in sentence] for sentence in sentences]
 
 
