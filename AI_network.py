@@ -21,7 +21,7 @@ class MyModel(nn.Module):
         super(MyModel, self).__init__()
         # maps each label to an embedding_dim vector
         self.embeddings = nn.Embedding(len(vocab), emb_dim).requires_grad_(True)
-        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=hid_dim, num_layers=3)
+        self.lstm = nn.LSTM(input_size=emb_dim, hidden_size=hid_dim, num_layers=1)
         self.fc = nn.Linear(hid_dim, 1)
 
     def forward(self, x):
