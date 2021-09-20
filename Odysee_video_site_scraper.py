@@ -3,7 +3,8 @@ Hello
 Odysee.com is a video streaming site that believes in free speech and therfore doesn't censor holocaust denial
 For the purpose of creating an AI that can detect holocaust denial posts, I found the site usefull for enlarging the AI's initial database. 
 (Many posts in the web are just the names of videos with a link to watch them..)
-I created this scraper using the selenium module to fetch video names that result when searching for holocaust denial content in the site 
+I created this scraper using the selenium module to fetch video names that result when searching for holocaust denial content in the site.
+The results are saved in a csv file.
 """
 
 from selenium import webdriver
