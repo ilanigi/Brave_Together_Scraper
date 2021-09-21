@@ -10,7 +10,6 @@ The results are saved in a csv file.
 from selenium import webdriver
 import time
 import pandas as pd
-import random
 
 #This is the function for scraping the site
 def scraper_test(search_term,file_path,limit):
@@ -61,10 +60,8 @@ def list_to_csv(lis):
     time.sleep(1)
     #add dataframe with the results into a csv file
     #The file will be saved in a new csv. 
-    # The csv has to have a name that doesn't exist in the directory so I added a random tag to the file name
-    tag_name=str(random.randint(1, 100000))
-    print("The reaults will be saved in the file name: 'Odysee_scraper_results_tag_{}.csv'".format(tag_name))
-    df.to_csv('results_tag_{}.csv'.format(tag_name))
+    file_name=input('Please enter file name for results to be sved in: ')
+    df.to_csv('{}.csv'.format(file_name))
 
 # Defining main function
 def main():
