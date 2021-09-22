@@ -8,7 +8,7 @@ from AI_utils import *
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-emb_dim = 50
+emb_dim = 300
 hid_dim = 100
 batchSize = 1
 lr = 0.01
@@ -97,10 +97,10 @@ if __name__ == '__main__':
     losses_train, accuracies_train, losses_dev, accuracies_dev = [], [], [], []
     for epoch in range(epochs):
         print("epoch", epoch)
-        loss_train, accuracy_train = train(trainData)
-        loss_dev, accuracy_dev = dev(devData)
+        accuracy_train, loss_train = train(trainData)
+        accuracy_dev, loss_dev= dev(devData)
         losses_train.append(loss_train)
-        accuracies_train.append(loss_train)
+        accuracies_train.append(accuracy_train)
         losses_dev.append(loss_dev)
         accuracies_dev.append(accuracy_dev)
 
