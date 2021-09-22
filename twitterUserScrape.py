@@ -6,7 +6,7 @@ tweets_list2 = []
 
 # Using TwitterSearchScraper to scrape data and append tweets to list
 for i, tweet in enumerate(
-        sntwitter.TwitterSearchScraper('from:@heejincunny').get_items()):
+        sntwitter.TwitterSearchScraper('from:@HolohoaxExposed').get_items()):
     if i > 5000:
         break
     #tweets_list2.append([tweet.date, tweet.id, tweet.content, tweet.user.username])

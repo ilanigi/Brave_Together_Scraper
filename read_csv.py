@@ -17,17 +17,17 @@ with open ('new_data.csv', 'w', encoding="utf8") as file_w:
     writer = csv.writer(file_w, lineterminator='\r')
     head = ['Data', 'Label']
     writer.writerow(head)
-    with open('labeled_data.csv', 'r', encoding="utf8") as file_r:
+    with open('fake.csv', 'r', encoding="utf8") as file_r:
         reader = pd.read_csv(file_r)
         for row in reader.itertuples():
-            tweet = row.tweet
+            tweet = row.Text
             if findWords(tweet):
-                if row.label == 1 or row.label==0 :
-                    label = 'Fake'
-                else:
-                    label = 'Real'
+                #if row.label == 1 or row.label==0 :
+                 #   label = 'Fake'
+                #else:
+                 #   label = 'Real'
                 tweet = tweet.replace('\n', '')
-                new_row = tweet, label
+                new_row = tweet, 'Fake'
                 writer.writerow(new_row)
                 counter += 1
 
